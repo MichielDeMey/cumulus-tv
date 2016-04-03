@@ -6,12 +6,12 @@
   "scripts": {
     "start": "watchify index.js -o dist/app.js -t [ babelify --sourceMaps inline --sourceMapRelative . --presets [ es2015 ] ] -d -v",
     "build": "browserify index.js -t [ babelify --presets [ es2015 ] ] | uglifyjs -cm > dist/app.js",
+    "prepare": "./node_modules/hogan.js/bin/hulk --variable App.templates -o ./templates/compiled/ ./templates/*.mustache",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Michiel De Mey <de.mey.michiel@gmail.com> (http://demey.io)",
   "license": "ISC",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.6.5",
     "babel-eslint": "^6.0.0-beta.3",
@@ -20,6 +20,7 @@
     "babelify": "^7.2.0",
     "core-js": "^2.1.3",
     "eslint": "^2.3.0",
+    "hogan.js": "^3.0.2",
     "whatwg-fetch": "^0.11.0"
   }
 }

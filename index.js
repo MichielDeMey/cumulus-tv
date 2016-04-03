@@ -7,7 +7,6 @@ import Presenter from './lib/Presenter'
 import Config from './config'
 
 const clientId = Config.clientId
-let resourceLoader
 
 App.feed = []
 App.Player = new Player()
@@ -18,7 +17,6 @@ App.onLaunch = (options) => {
   App.BASEURL = options.BASEURL
   Auth.AUTHURL = options.AUTHURL
 
-  resourceLoader = new ResourceLoader()
   Presenter.showLoadingIndicator()
 
   // Check SoundCloud token
@@ -26,18 +24,11 @@ App.onLaunch = (options) => {
     .then((token) => {
       App.SoundCloud = new SoundCloud(token, clientId)
 
-      App.SoundCloud.fetchLikes().then((feedItems) => {
-        App.feed = feedItems
+      App.SoundCloud.fetchLikes().then((tracks) => {
+        App.feed = tracks
 
         // Present the feed
-        var startTemplate = `${options.BASEURL}/templates/grid.xml.js`
-
-        var index = resourceLoader.loadResource(startTemplate, function(resource) {
-          var doc = Presenter.makeDocument(resource)
-          doc.addEventListener('select', App.playSong)
-          doc.addEventListener('play', App.playSong)
-          Presenter.feedPresenter(doc, feedItems)
-        })
+        Presenter.presentFeed(tracks)
       })
     })
     .catch((err) => {
@@ -85,8 +76,7 @@ App.login = (authuri) => {
         const key = res.body.key
 
         // Show auth dialog
-        const auth = createOAuthLogin(key, res.body.qr, authuri)
-        Presenter.presentModal(auth)
+        Presenter.presentAuthModal(authuri, key, res.body.qr)
 
         const check = () => {
           Auth.checkKey(key, secret)
@@ -105,36 +95,4 @@ App.login = (authuri) => {
         setTimeout(check, 2000)
       })
   })
-}
-
-const createOAuthLogin = (key, qrcode, authuri) => {
-  const templateString = `<?xml version="1.0" encoding="UTF-8" ?>
-  <document>
-    <descriptiveAlertTemplate>
-       <title>Scan this QR code to log in</title>
-       <description>
-        Or go to ${authuri}/activate
-        and enter the key "${key}"
-       </description>
-       <img width="620" height="620" src="${qrcode}" />
-    </descriptiveAlertTemplate>
-  </document>
-  `
-  const parser = new DOMParser()
-  return parser.parseFromString(templateString, 'application/xml')
-}
-
-App.createAlert = (title, description) => {
-    const alertString = `<?xml version="1.0" encoding="UTF-8" ?>
-    <document>
-      <alertTemplate>
-        <title>${title}</title>
-        <description>${description}</description>
-        <button>
-          <text>OK</text>
-        </button>
-      </alertTemplate>
-    </document>`
-    const parser = new DOMParser()
-    return parser.parseFromString(alertString, 'application/xml')
 }

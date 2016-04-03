@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<document>
+  <head>
+    <style>
+    .showTextOnHighlight {
+      tv-labels-state: show-on-highlight;
+    }
+    </style>
+  </head>
+  <stackTemplate class="darkBackgroundColor" theme="dark">
+    <banner>
+      <background>
+        <img src="{{baseUrl}}/resources/background.jpg" width="1920" height="360" />
+      </background>
+    </banner>
+    <collectionList>
+      <grid>
+        <header>
+          <title>Likes</title>
+        </header>
+        <section>
+          {{#tracks}}
+            <lockup trackId="{{id}}">
+              <img src="{{artwork_url}}" width="300" height="300" />
+              <title>{{title}}</title>
+            </lockup>
+          {{/tracks}}
+        </section>
+      </grid>
+    </collectionList>
+  </stackTemplate>
+</document>
